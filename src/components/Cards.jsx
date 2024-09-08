@@ -1,14 +1,21 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, Eye } from 'phosphor-react';
-import { FaStar } from 'react-icons/fa';
-import Swal from 'sweetalert2'; // Import SweetAlert
+import { Heart, Eye } from 'phosphor-react'; 
+import { FaHeart, FaStar } from 'react-icons/fa';
+import Swal from 'sweetalert2'; 
 
 function Cards({ product = {}, onAddToWishlist, updateCartCount }) {
   const { id, image, title, price } = product;
   const navigate = useNavigate();
 
   if (!product || !id) return null;
+
+  // Randomly decide if this product has a discount (50% chance)
+  const hasDiscount = Math.random() > 0.5;
+  // Generate random discount percentage between 5% and 30%
+  const discountPercentage = hasDiscount ? Math.floor(Math.random() * 26) + 5 : 0;
+  const discountAmount = (price * discountPercentage) / 100;
+  const discountedPrice = (price - discountAmount).toFixed(2);
 
   // Generate random ratings and reviews
   const rating = (Math.random() * 4 + 1).toFixed(1);
@@ -61,11 +68,10 @@ function Cards({ product = {}, onAddToWishlist, updateCartCount }) {
 
   // Function to handle viewing the product details
   const handleViewProduct = () => {
-
     if (localStorage.getItem('isSignedIn') !== 'true') {
       Swal.fire({
         title: 'Not Logged In',
-        text: 'Please log in to view products details.',
+        text: 'Please log in to view product details.',
         icon: 'warning',
         confirmButtonText: 'OK',
       }).then(() => {
@@ -76,15 +82,31 @@ function Cards({ product = {}, onAddToWishlist, updateCartCount }) {
     navigate(`/product/${id}`, { state: { product } });
   };
 
+  // Retrieve wishlist from localStorage
+  const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+  // Check if the product is already in the wishlist
+  const isInWishlist = wishlist.some(item => item.id === id);
+
   return (
     <div className="min-w-[268px] h-[248px] p-2 group relative">
       <div className="bg-Secondary lg:w-full w-[60%] h-[80%] flex justify-center rounded items-center relative overflow-hidden">
+        {/* Conditionally display Discount Label */}
+        {hasDiscount && (
+          <div className="absolute top-2 bg-Secondary2 left-2  text-Text px-2 py-1 text-xs rounded">
+            {discountPercentage}% OFF
+          </div>
+        )}
+        
         {/* Product image */}
         <img src={image} alt={title} className="h-32 object-contain" />
         <div className="absolute top-2 right-2 flex-col flex gap-2">
           {/* Add to wishlist */}
           <div className='bg-Text rounded-full p-1 cursor-pointer' onClick={() => onAddToWishlist(product)}>
-            <Heart size={24} className='text-Text2 hover:text-red-500 transition-colors duration-300' />
+            {isInWishlist ? (
+              <FaHeart size={24} color="red" className='transition-colors duration-300' /> // Red heart if in wishlist
+            ) : (
+              <Heart size={24} className='text-Text2 hover:text-red-500 transition-colors duration-300' /> // Default heart if not in wishlist
+            )}
           </div>
           {/* View product */}
           <div className='bg-Text rounded-full p-1 cursor-pointer' onClick={handleViewProduct}>
@@ -104,7 +126,18 @@ function Cards({ product = {}, onAddToWishlist, updateCartCount }) {
       {/* Product details */}
       <div className="mt-2">
         <h4 className="font-bold lg:text-lg text-sm truncate">{title}</h4>
-        <span className="block text-Secondary2 font-medium">${price}</span>
+        
+        {/* Conditionally show original and discounted price */}
+        {hasDiscount ? (
+          <>
+          <div className='flex gap-4'>
+            <span className="block text-Secondary2 font-bold">${discountedPrice}</span>
+            <span className="block text-Text1 font-medium line-through">${price}</span>
+          </div>
+          </>
+        ) : (
+          <span className="block text-Secondary2 font-medium">${price}</span>
+        )}
 
         {/* Rating and Reviews */}
         <div className='flex items-center'>
