@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-   "homepage": "https://Ri0x2.github.io/EcommerceApp",
+   "homepage": "https://ri0x2.github.io/EcommerceApp",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
