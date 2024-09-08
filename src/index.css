@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+@layer base {
+    @font-face {
+      font-family: 'Roboto';
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url(/fonts/Roboto.woff2) format('woff2');
+    }
+  }
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none; 
+  scrollbar-width: none;  
+}
+
+
+.hidden-checkbox {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.custom-checkbox {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #e2e8f0; 
+  background-color: #d1d5db; 
+  border-radius: 3px;
+  position: relative;
+  cursor: pointer;
+}
+
+.hidden-checkbox:checked + .custom-checkbox {
+  background-color: #f97316;
+  border-color: #f97316; 
+}
+
+.custom-checkbox::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  transform: translate(-50%, -50%);
+  border-radius: 2px;
+  opacity: 0;
+}
+
+.hidden-checkbox:checked + .custom-checkbox::after {
+  opacity: 1;
+}
+
+.size {
+  padding: 8px 16px;
+  margin: 0 4px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: background-color 0.3s, color 0.3s, border 0.3s;
+}
+
+.size:hover, .selected-size {
+  background-color: #DB4444;
+  color: #fff;
+  border-color: #333;
+}
